@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  ejari-extractor:
+    container_name: ejari-web-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
