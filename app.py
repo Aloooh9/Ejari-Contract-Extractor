@@ -2,7 +2,6 @@ import streamlit as st
 import pdfplumber
 import pandas as pd
 import re
-import io
 
 st.set_page_config(page_title="Ejari Data Extractor", layout="wide")
 
@@ -18,9 +17,10 @@ def extract_rental_data(pdf_file):
     except Exception as e:
         return {"Filename": pdf_file.name, "Error": f"Could not read PDF: {str(e)}"}
 
-    # Regex patterns tailored for Ejari formatting
-    # Looks for either Property No or Unit No (as commercial properties often just list Unit No)
-    prop_no_match = re.search(r'(?:Property No.*?|Unit No(?:\.\(s\))?)\s*\n*([A-Z0-9\-]+)', text, re.IGNORECASE)
+    # --- REGEX PATTERNS ---
+    # Matches "Property No.(s)" or "Unit No." and grabs the clean alphanumeric string on the next line
+    prop_no_match = re.search(r'(?:Property No\.\(s\).*?|Unit No(?:\.\(s\))?.*?)\s*\n\s*([A-Z0-9\-]+)', text, re.IGNORECASE)
+    
     start_date_match = re.search(r'Start Date\s*\n*([\d]{2}-[\d]{2}-[\d]{4})', text)
     end_date_match = re.search(r'End Date\s*\n*([\d]{2}-[\d]{2}-[\d]{4})', text)
     contract_amount_match = re.search(r'Actual Contract Amount\s*\n*([\d,]+\.\d{2}\s*AED)', text)
